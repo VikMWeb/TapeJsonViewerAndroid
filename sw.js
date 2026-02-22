@@ -1,4 +1,4 @@
-const CACHE_NAME = "tape-json-viewer-v1";
+const CACHE_NAME = "tape-json-viewer-v2";
 
 const ASSETS = [
   "./",
@@ -68,4 +68,5 @@ async function staleWhileRevalidate(req) {
   return cached || (await networkPromise) || new Response("[]", {
     headers: { "Content-Type": "application/json" }
   });
+
 }
