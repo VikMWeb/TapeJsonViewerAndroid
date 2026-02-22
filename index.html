@@ -57,9 +57,10 @@
       <button id="btnAdd" type="button">+Додати</button>
       <button id="btnImport" type="button">Імпорт JSON</button>
       <button id="btnExport" type="button">Експорт JSON</button>
+      <button id="btnSync" type="button">Оновити online</button>
       <button id="btnReset" type="button">Скинути</button>
 
-      <!-- Показується тільки якщо браузер дозволяє prompt на встановлення -->
+      <!-- PWA install (якщо браузер дозволяє prompt) -->
       <button id="btnInstall" type="button" hidden>Встановити</button>
 
       <input id="fileJson" type="file" accept="application/json,.json" hidden />
@@ -89,12 +90,12 @@
     </main>
 
     <footer class="foot muted">
-      Для встановлення PWA потрібен HTTPS (або localhost). Після першого відкриття додаток працює офлайн.
+      Для встановлення PWA потрібен HTTPS (GitHub Pages ок). Після першого відкриття — працює offline.
     </footer>
 
     <div id="toast" class="toast" hidden></div>
 
-    <!-- MODAL -->
+    <!-- MODAL: Add -->
     <div id="modal" class="modal" hidden>
       <div class="modal__backdrop" id="modalBackdrop"></div>
       <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
