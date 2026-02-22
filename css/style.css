@@ -1,4 +1,4 @@
-[hidden]{ display:none !important; } /* щоб модалка не перекривала кнопки */
+[hidden]{ display:none !important; }
 
 *{ box-sizing:border-box; }
 :root{
@@ -78,6 +78,7 @@ button{
   cursor:pointer;
 }
 button:hover{ filter:brightness(.98); }
+button:disabled{ opacity:.6; cursor:not-allowed; }
 
 .card{
   background:var(--card);
