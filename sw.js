@@ -27,14 +27,13 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Stale-While-Revalidate для JSON, Cache-First для shell
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
   if (req.method !== "GET") return;
 
-  // Навігація: віддати index.html з кешу (офлайн)
+  // Навігація: index.html з кешу (offline)
   if (req.mode === "navigate") {
     event.respondWith(
       caches.match("./index.html").then((cached) => cached || fetch(req))
@@ -42,31 +41,35 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // JSON: кеш + фонове оновлення
+  // products.json: network-first (щоб кнопка "Оновити online" завжди тягнула свіже)
   if (url.pathname.endsWith("/data/products.json") || url.pathname.endsWith("products.json")) {
-    event.respondWith(staleWhileRevalidate(req));
+    event.respondWith(networkFirstJSON(req));
     return;
   }
 
-  // Інші ресурси: cache-first
+  // Інше: cache-first
   event.respondWith(
     caches.match(req).then((cached) => cached || fetch(req))
   );
 });
 
-async function staleWhileRevalidate(req) {
+async function networkFirstJSON(req) {
+  const url = new URL(req.url);
   const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(req);
 
-  const networkPromise = fetch(req)
-    .then((res) => {
-      cache.put(req, res.clone());
-      return res;
-    })
-    .catch(() => null);
+  // нормалізуємо ключ кешу без query (?t=...)
+  const normalized = new Request(url.origin + url.pathname, { method: "GET" });
 
-  return cached || (await networkPromise) || new Response("[]", {
+  try {
+    const fresh = await fetch(req);
+    if (fresh && fresh.ok) {
+      await cache.put(normalized, fresh.clone());
+      return fresh;
+    }
+  } catch {}
+
+  const cached = await cache.match(normalized);
+  return cached || new Response("[]", {
     headers: { "Content-Type": "application/json" }
   });
-
 }
