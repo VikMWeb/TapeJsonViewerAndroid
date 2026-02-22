@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnAdd: $("btnAdd"),
     btnImport: $("btnImport"),
     btnExport: $("btnExport"),
+    btnSync: $("btnSync"),
     btnReset: $("btnReset"),
     btnInstall: $("btnInstall"),
     fileJson: $("fileJson"),
@@ -47,33 +48,34 @@ document.addEventListener("DOMContentLoaded", () => {
   let viewItems = [];
   let dataSourceLabel = "—";
 
-  // ===== PWA Install кнопка =====
+  // ===== PWA Install =====
   let deferredPrompt = null;
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    els.btnInstall.hidden = false;
+    if (els.btnInstall) els.btnInstall.hidden = false;
   });
 
-  els.btnInstall.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    els.btnInstall.hidden = true;
-  });
-
-  // ===== Service Worker =====
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js").then(() => {
-      toast("PWA кеш увімкнено ✅ (offline після першого запуску)");
-    }).catch(() => {
-      toast("SW не запустився (перевір HTTPS)");
+  if (els.btnInstall) {
+    els.btnInstall.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      els.btnInstall.hidden = true;
     });
   }
 
+  // ===== Service Worker =====
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  }
+
   const fmtUah = (n) =>
-    (Number.isFinite(n) ? n : 0).toLocaleString("uk-UA", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " грн";
+    (Number.isFinite(n) ? n : 0).toLocaleString("uk-UA", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }) + " грн";
 
   const discountPct = (price, oldPrice) => {
     const p = Number(price);
@@ -90,9 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function saveToLocal() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-    } catch {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch {}
   }
 
   function loadFromLocal() {
@@ -104,6 +104,55 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch {
       return null;
     }
+  }
+
+  // ===== Online update UI + progress =====
+  function setSyncUI(isLoading, pct = 0) {
+    if (!els.btnSync) return;
+    els.btnSync.disabled = isLoading;
+    els.btnSync.textContent = isLoading ? `Оновлення… ${pct}%` : "Оновити online";
+  }
+
+  async function fetchJSONWithProgress(url) {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    // якщо stream недоступний — без прогресу
+    if (!res.body) return await res.json();
+
+    const len = Number(res.headers.get("content-length")) || 0;
+    const reader = res.body.getReader();
+    const chunks = [];
+    let received = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      chunks.push(value);
+      received += value.byteLength;
+
+      if (len > 0) {
+        const pct = Math.min(99, Math.floor((received / len) * 100));
+        setSyncUI(true, pct);
+      } else {
+        const pct = 10 + (received % 80);
+        setSyncUI(true, pct);
+      }
+    }
+
+    setSyncUI(true, 99);
+
+    const total = chunks.reduce((a, c) => a + c.byteLength, 0);
+    const bytes = new Uint8Array(total);
+    let off = 0;
+    for (const c of chunks) {
+      bytes.set(c, off);
+      off += c.byteLength;
+    }
+
+    const text = new TextDecoder("utf-8").decode(bytes);
+    return JSON.parse(text);
   }
 
   function specLabel(x) {
@@ -262,7 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fillFilters(all);
     resetUI();
-
     saveToLocal();
 
     if (!all.length) {
@@ -402,6 +450,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   els.btnExport.addEventListener("click", exportJSON);
 
+  // ===== Оновити online =====
+  els.btnSync.addEventListener("click", async () => {
+    try {
+      if (!navigator.onLine) {
+        toast("Немає інтернету (offline).");
+        return;
+      }
+      setSyncUI(true, 0);
+      toast("Оновлюю online…");
+
+      // cache-bust
+      const url = `${DATA_URL}?t=${Date.now()}`;
+      const data = await fetchJSONWithProgress(url);
+
+      // онлайн повністю заміняє локальне
+      setData(data, "online products.json");
+
+      setSyncUI(false, 100);
+      toast("Оновлено ✅ (тепер працює offline)");
+    } catch (e) {
+      setSyncUI(false, 0);
+      toast(`Помилка оновлення: ${String(e.message || e)}`);
+    }
+  });
+
+  // modal events
   els.btnAdd.addEventListener("click", openModal);
   els.mClose.addEventListener("click", closeModal);
   els.mCancel.addEventListener("click", closeModal);
@@ -423,6 +497,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ===== init data (localStorage → fetch) =====
   (async () => {
+    setSyncUI(false, 0);
+
     const local = loadFromLocal();
     if (local) {
       setData(local, "localStorage (offline)");
