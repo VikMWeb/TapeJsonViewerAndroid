@@ -1,0 +1,162 @@
+[
+  {
+    "id": "79707",
+    "title": "Касова стрічка 55-57/12 термо (17м)",
+    "spec": {
+      "density_gsm": 55,
+      "width_mm": 57,
+      "core_mm": 12,
+      "length_m": 17
+    },
+    "price_uah": 7.8,
+    "old_price_uah": 8.2,
+    "in_stock": true,
+    "box_qty": 120,
+    "pack_qty": 12,
+    "url": "https://shop.vsesvit.pro/kasova-strichka-55-57-12-termo-17m/"
+  },
+  {
+    "id": "187172",
+    "title": "Касова стрічка 48-57/12 термо (17м)",
+    "spec": {
+      "density_gsm": 48,
+      "width_mm": 57,
+      "core_mm": 12,
+      "length_m": 17
+    },
+    "price_uah": 8.22,
+    "old_price_uah": 8.6,
+    "in_stock": true,
+    "box_qty": 210,
+    "pack_qty": 14,
+    "url": "https://shop.vsesvit.pro/papir-ks-48-57-12-termo-17m/"
+  },
+  {
+    "id": "132762",
+    "title": "Касова стрічка 48-57/12 термо (19м)",
+    "spec": {
+      "density_gsm": 48,
+      "width_mm": 57,
+      "core_mm": 12,
+      "length_m": 19
+    },
+    "price_uah": 9,
+    "old_price_uah": 9.3,
+    "in_stock": true,
+    "box_qty": 210,
+    "pack_qty": 14,
+    "url": "https://shop.vsesvit.pro/kasova-strichka-48-57-12-termo-19m/"
+  },
+  {
+    "id": "92868",
+    "title": "Касова стрічка 48-57/12 термо (21м)",
+    "spec": {
+      "density_gsm": 48,
+      "width_mm": 57,
+      "core_mm": 12,
+      "length_m": 21
+    },
+    "price_uah": 9.84,
+    "old_price_uah": 10,
+    "in_stock": true,
+    "box_qty": 150,
+    "pack_qty": 10,
+    "url": "https://shop.vsesvit.pro/kasova-strichka-48-57-12-termo-21m/"
+  },
+  {
+    "id": "171821",
+    "title": "Касова стрічка 48-80/18 термо (19м)",
+    "spec": {
+      "density_gsm": 48,
+      "width_mm": 80,
+      "core_mm": 18,
+      "length_m": 19
+    },
+    "price_uah": 13.2,
+    "old_price_uah": 14.2,
+    "in_stock": true,
+    "box_qty": 180,
+    "pack_qty": 12,
+    "url": "https://shop.vsesvit.pro/kasova-strichka-48-80-18-termo-19m/"
+  },
+  {
+    "id": "92572",
+    "title": "Касова стрічка 48-57/12 термо (30м)",
+    "spec": {
+      "density_gsm": 48,
+      "width_mm": 57,
+      "core_mm": 12,
+      "length_m": 30
+    },
+    "price_uah": 13.95,
+    "old_price_uah": 14.5,
+    "in_stock": true,
+    "box_qty": 120,
+    "pack_qty": 12,
+    "url": "https://shop.vsesvit.pro/kasova-strichka-48-57-12-termo-30m/"
+  },
+  {
+    "id": "82945",
+    "title": "Касова стрічка 48-57/12 термо (40м)",
+    "spec": {
+      "density_gsm": 48,
+      "width_mm": 57,
+      "core_mm": 12,
+      "length_m": 40
+    },
+    "price_uah": 18.42,
+    "old_price_uah": 19,
+    "in_stock": true,
+    "box_qty": 100,
+    "pack_qty": 10,
+    "url": "https://shop.vsesvit.pro/kasova-strichka-48-57-12-termo-40m/"
+  },
+  {
+    "id": "82943",
+    "title": "Касова стрічка 48-57/12 термо (60м)",
+    "spec": {
+      "density_gsm": 48,
+      "width_mm": 57,
+      "core_mm": 12,
+      "length_m": 60
+    },
+    "price_uah": 27.42,
+    "old_price_uah": 29,
+    "in_stock": true,
+    "box_qty": 60,
+    "pack_qty": 6,
+    "url": "https://shop.vsesvit.pro/kasova-strichka-48-57-12-termo-60m/"
+  },
+  {
+    "id": "30801",
+    "title": "Касова стрічка 48-80/12 термо (70м)",
+    "spec": {
+      "density_gsm": 48,
+      "width_mm": 80,
+      "core_mm": 12,
+      "length_m": 70
+    },
+    "price_uah": 39,
+    "old_price_uah": 42,
+    "in_stock": true,
+    "box_qty": 45,
+    "pack_qty": 3,
+    "url": "https://shop.vsesvit.pro/kasova-strichka-80-12-termo-70m/"
+  },
+  {
+    "id": "181014",
+    "title": "Касова стрічка 48-80/12 термо (75м)",
+    "spec": {
+      "density_gsm": 48,
+      "width_mm": 80,
+      "core_mm": 12,
+      "length_m": 75
+    },
+    "price_uah": 48,
+    "old_price_uah": 49,
+    "in_stock": true,
+    "box_qty": 60,
+    "pack_qty": 3,
+    "url": "https://shop.vsesvit.pro/kasova-strichka-48-80-12-termo-75m/"
+  }
+]

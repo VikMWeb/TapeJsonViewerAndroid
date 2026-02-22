@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Tape JSON Viewer</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#111827" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <div>
+        <h1>Tape JSON Viewer</h1>
+        <p class="muted">
+          Перегляд асортименту з <code>data/products.json</code> або імпортованого файлу
+        </p>
+      </div>
+      <div class="stats" id="stats">Готово</div>
+    </header>
+
+    <section class="controls">
+      <input id="q" type="search" placeholder="Пошук: назва або ID…" autocomplete="off" />
+
+      <select id="fWidth">
+        <option value="">Ширина: всі</option>
+      </select>
+
+      <select id="fCore">
+        <option value="">Втулка: всі</option>
+      </select>
+
+      <select id="fLen">
+        <option value="">Довжина: всі</option>
+      </select>
+
+      <label class="chk">
+        <input id="inStockOnly" type="checkbox" />
+        Тільки в наявності
+      </label>
+
+      <select id="sort">
+        <option value="price_asc">Ціна ↑</option>
+        <option value="price_desc">Ціна ↓</option>
+        <option value="len_asc">Довжина ↑</option>
+        <option value="len_desc">Довжина ↓</option>
+        <option value="title_asc">Назва A→Я</option>
+        <option value="title_desc">Назва Я→A</option>
+      </select>
+
+      <button id="btnAdd" type="button">+Додати</button>
+      <button id="btnImport" type="button">Імпорт JSON</button>
+      <button id="btnExport" type="button">Експорт JSON</button>
+      <button id="btnReset" type="button">Скинути</button>
+
+      <!-- Показується тільки якщо браузер дозволяє prompt на встановлення -->
+      <button id="btnInstall" type="button" hidden>Встановити</button>
+
+      <input id="fileJson" type="file" accept="application/json,.json" hidden />
+    </section>
+
+    <main class="card">
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Назва</th>
+              <th>Характеристики</th>
+              <th class="num">Ціна</th>
+              <th class="num">Було</th>
+              <th class="num">Знижка</th>
+              <th>Наявність</th>
+              <th class="num">Коробка</th>
+              <th class="num">Пачка</th>
+            </tr>
+          </thead>
+          <tbody id="rows">
+            <tr><td colspan="9" class="muted">Немає даних. Натисни “Імпорт JSON” або “+Додати”.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <footer class="foot muted">
+      Для встановлення PWA потрібен HTTPS (або localhost). Після першого відкриття додаток працює офлайн.
+    </footer>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <!-- MODAL -->
+    <div id="modal" class="modal" hidden>
+      <div class="modal__backdrop" id="modalBackdrop"></div>
+      <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+        <div class="modal__head">
+          <h2 id="mTitle">Додати товар</h2>
+          <button class="iconBtn" id="mClose" type="button" title="Закрити">✕</button>
+        </div>
+
+        <form id="addForm" class="form">
+          <div class="grid">
+            <label>
+              <span>ID (артикул)</span>
+              <input id="f_id" required placeholder="наприклад 12345" />
+            </label>
+
+            <label class="col2">
+              <span>Назва</span>
+              <input id="f_title" required placeholder="Касова стрічка ..." />
+            </label>
+
+            <label>
+              <span>Щільність (г/м²)</span>
+              <input id="f_density" inputmode="numeric" placeholder="48" />
+            </label>
+
+            <label>
+              <span>Ширина (мм)</span>
+              <input id="f_width" inputmode="numeric" placeholder="57" />
+            </label>
+
+            <label>
+              <span>Втулка (мм)</span>
+              <input id="f_core" inputmode="numeric" placeholder="12" />
+            </label>
+
+            <label>
+              <span>Довжина (м)</span>
+              <input id="f_len" inputmode="numeric" placeholder="21" />
+            </label>
+
+            <label>
+              <span>Ціна (грн)</span>
+              <input id="f_price" inputmode="decimal" required placeholder="9.84" />
+            </label>
+
+            <label>
+              <span>Стара ціна (грн)</span>
+              <input id="f_old" inputmode="decimal" placeholder="10.00" />
+            </label>
+
+            <label>
+              <span>Коробка (шт)</span>
+              <input id="f_box" inputmode="numeric" placeholder="150" />
+            </label>
+
+            <label>
+              <span>Пачка (шт)</span>
+              <input id="f_pack" inputmode="numeric" placeholder="10" />
+            </label>
+
+            <label class="col2">
+              <span>URL товару</span>
+              <input id="f_url" placeholder="https://..." />
+            </label>
+
+            <label class="switch col2">
+              <input id="f_stock" type="checkbox" checked />
+              <span>В наявності</span>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btnGhost" id="mCancel">Скасувати</button>
+            <button type="submit" class="btnPrimary">Додати</button>
+          </div>
+
+          <p class="hint muted">
+            Дані зберігаються локально (offline). “Експорт JSON” — щоб зберегти у файл.
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
